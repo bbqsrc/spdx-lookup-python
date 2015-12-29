@@ -7,6 +7,7 @@ setup(
     name = "spdx-lookup",
     version = "0.1.0",
     packages = ['spdx_lookup'],
+    install_requires = ['spdx'],
     author = "Brendan Molloy",
     author_email = "brendan+pypi@bbqsrc.net",
     description = "SPDX license list query tool",
