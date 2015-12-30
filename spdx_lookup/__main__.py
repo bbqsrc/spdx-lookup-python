@@ -1,11 +1,18 @@
 import argparse
-from textwrap import indent, fill
+import textwrap
+import sys
 
 import spdx_lookup as lookup
 from spdx_lookup import LicenseMatch, _spdx_var_re
 
+def indent(text, prefix):
+    w = textwrap.TextWrapper(initial_indent=prefix, subsequent_indent=prefix,
+        expand_tabs=False, drop_whitespace=False, replace_whitespace=False,
+        break_long_words=False, break_on_hyphens=False, width=sys.maxint)
+    return '\n'.join(w.fill(x) for x in text.split('\n'))
+
 def wrap(text, w=77):
-    return '\n'.join(fill(x, w) for x in text.split('\n'))
+    return '\n'.join(textwrap.fill(x, w) for x in text.split('\n'))
 
 def print_info(res):
     if isinstance(res, LicenseMatch):
