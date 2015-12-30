@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name = "spdx-lookup",
-    version = "0.1.1",
+    version = "0.2.0",
     packages = ['spdx_lookup'],
     install_requires = ['spdx'],
     author = "Brendan Molloy",
@@ -26,5 +26,10 @@ setup(
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5"
-    ]
+    ],
+    entry_points = {
+        'console_scripts': [
+            'spdx-lookup = spdx_lookup.__main__:main'
+        ]
+    }
 )

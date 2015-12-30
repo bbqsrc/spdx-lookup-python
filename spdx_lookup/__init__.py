@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from collections import namedtuple
+import os
 import re
 
 import spdx
@@ -20,8 +21,8 @@ _word_set_re = re.compile(r"([A-Za-z]+|[A-Za-z]+'[A-Za-z]+)")
 _copyright_re = re.compile(r'\s*Copyright\s*(©|\(c\)|\xC2\xA9)?' +
                             '\s*(\d{4}|.year.)(.*)?' +
                             '(?:\s*All rights reserved).*', re.I | re.M)
-_spdx_var_re = re.compile(r'\\?<\\?<var\\?;name\\?=(.*?)\\?;' +
-                           'original\\?=(.*?)\\?;match\\?=(.*?)\\?>\\?>', re.I | re.M)
+_spdx_var_re = re.compile(r'<<var;name=(.*?);' +
+                           'original=(.*?);match=(.*?)>>', re.I | re.M)
 
 
 def _spdx_var_orig(match):
@@ -100,3 +101,37 @@ def match(content, threshold=90, include_hidden=False):
 
     return LicenseMatch(*matches.pop())
 
+_license_fn_res = [
+    re.compile('^(un)?licen[sc]e$', re.I),
+    re.compile('^(un)?licen[sc]e\.(md|markdown|txt)$', re.I),
+    re.compile('^copy(ing|right)(\.[^.]+)?$', re.I),
+    re.compile('^(un)?licen[sc]e\.[^.]+$', re.I),
+    re.compile('licen[sc]e', re.I)
+]
+
+def _file_score(path):
+    fn = os.path.basename(path)
+
+    for n, regex in enumerate(_license_fn_res):
+        if regex.match(fn):
+            return len(_license_fn_res) - n
+    return 0
+
+def match_path(path, threshold=90, include_hidden=False):
+    if not os.path.isdir(path):
+        raise ValueError("Path must be a directory")
+
+    x = []
+    for fn in os.listdir(path):
+        fnp = os.path.join(path, fn)
+        score = _file_score(fnp)
+        if score > 0:
+            x.append((score, fnp))
+
+    if len(x) == 0:
+        return None
+
+    x.sort(key=lambda x: x[0])
+
+    with open(x.pop()[1]) as f:
+        return match(f.read(), threshold, include_hidden)
