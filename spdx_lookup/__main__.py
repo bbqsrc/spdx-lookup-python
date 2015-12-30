@@ -16,12 +16,14 @@ def wrap(text, w=77):
 
 def print_info(res):
     if isinstance(res, LicenseMatch):
+        if res.filename:
+            print("File: %s" % res.filename)
         print("Confidence: %.2f%%" % res.confidence)
         res = res.license
 
     print("Id: %s" % res.id)
     print("Name: %s" % res.name)
-    print("OSI approved: %s" % "yes" if res.osi_approved is True else "no")
+    print("OSI approved: %s" % ("yes" if res.osi_approved is True else "no"))
     if res.notes:
         print("Notes:")
         print(indent(wrap(res.notes), '  '))

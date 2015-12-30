@@ -5,7 +5,7 @@ with open('README.rst') as f:
 
 setup(
     name = "spdx-lookup",
-    version = "0.2.1",
+    version = "0.3.0",
     packages = ['spdx_lookup'],
     install_requires = ['spdx'],
     author = "Brendan Molloy",

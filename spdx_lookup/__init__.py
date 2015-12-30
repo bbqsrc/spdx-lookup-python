@@ -7,7 +7,8 @@ import re
 import spdx
 from spdx import License
 
-LicenseMatch = namedtuple('LicenseMatch', ['confidence', 'license'])
+LicenseMatch = namedtuple('LicenseMatch',
+        ['confidence', 'license', 'filename'])
 
 _id_idx = {}
 _name_idx = {}
@@ -59,7 +60,8 @@ def by_id(id_):
 # Special cases for matching
 _hidden = {
     'BSD-2-Clause-FreeBSD',
-    'BSD-2-Clause-NetBSD'
+    'BSD-2-Clause-NetBSD',
+    'Mup'
 }
 
 
@@ -99,7 +101,8 @@ def match(content, threshold=90, include_hidden=False):
     if len(matches) == 0:
         return None
 
-    return LicenseMatch(*matches.pop())
+    m = matches.pop()
+    return LicenseMatch(m[0], m[1], None)
 
 _license_fn_res = [
     re.compile('^(un)?licen[sc]e$', re.I),
@@ -126,12 +129,17 @@ def match_path(path, threshold=90, include_hidden=False):
         fnp = os.path.join(path, fn)
         score = _file_score(fnp)
         if score > 0:
-            x.append((score, fnp))
+            x.append((score, fn))
 
     if len(x) == 0:
         return None
 
     x.sort(key=lambda x: x[0])
 
-    with open(x.pop()[1]) as f:
-        return match(f.read(), threshold, include_hidden)
+    fn = x.pop()[1]
+    with open(os.path.join(path, fn)) as f:
+        matches = _match_all(f.read(), threshold, include_hidden)
+        if len(matches) > 0:
+            m = matches[0]
+            return LicenseMatch(m[0], m[1], fn)
+
