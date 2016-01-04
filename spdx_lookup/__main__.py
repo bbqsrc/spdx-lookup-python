@@ -5,10 +5,12 @@ import sys
 import spdx_lookup as lookup
 from spdx_lookup import LicenseMatch, _spdx_var_re
 
+MAX_WIDTH = 2 ** 20
+
 def indent(text, prefix):
     w = textwrap.TextWrapper(initial_indent=prefix, subsequent_indent=prefix,
         expand_tabs=False, drop_whitespace=False, replace_whitespace=False,
-        break_long_words=False, break_on_hyphens=False, width=sys.maxint)
+        break_long_words=False, break_on_hyphens=False, width=MAX_WIDTH)
     return '\n'.join(w.fill(x) for x in text.split('\n'))
 
 def wrap(text, w=77):
