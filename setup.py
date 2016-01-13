@@ -5,9 +5,9 @@ with open('README.rst') as f:
 
 setup(
     name = "spdx-lookup",
-    version = "0.3.1",
+    version = "0.3.2",
     packages = ['spdx_lookup'],
-    install_requires = ['spdx'],
+    install_requires = ['spdx>=2.3.0'],
     author = "Brendan Molloy",
     author_email = "brendan+pypi@bbqsrc.net",
     description = "SPDX license list query tool",
